@@ -20,6 +20,6 @@
  
  ## 上线发布
  ````
- $ yarn build or npm build
+ $ yarn run build or npm run build
  
  ````

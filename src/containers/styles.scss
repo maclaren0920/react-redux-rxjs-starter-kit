@@ -1,0 +1,26 @@
+@mixin text-align{
+  text-align: center;
+}
+.home{
+  margin-top: 50px;
+  @include text-align;
+}
+.time{
+  font-size: 20px;
+  margin: 15px 0;
+  @include text-align;
+}
+.route{
+  @include text-align;
+}
+.notFound{
+  margin-top: 50px;
+  @include text-align;
+  .back{
+    color: #07c;
+    &:hover{
+      text-decoration: underline;
+    }
+  }
+}
+

@@ -6,9 +6,9 @@
 ## 安装
  使用react-redux-rxjs-starter-kit执行以下操作来创建一个新项目：
  ````
-    $ git clone https://github.com/leafydream/react-redux-rxjs-starter-kit.git <my-project-name>
-    $ cd <my-project-name>
-    $ yarn install or npm install
+ $ git clone https://github.com/leafydream/react-redux-rxjs-starter-kit.git <my-project-name>
+ $ cd <my-project-name>
+ $ yarn install or npm install
     
  ````
  

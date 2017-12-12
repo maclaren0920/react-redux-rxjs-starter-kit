@@ -12,9 +12,9 @@
     
  ````
  
- ## 运行项目
+ ## 运行
  ````
-    $ yarn start or npm start
+ $ yarn start or npm start
  
  ````
  

@@ -14,7 +14,7 @@ let getDependencies = () => {
 
 module.exports = {
     entry: {
-        main: './src/index',
+        main: './src/main',
         vendor: getDependencies()
     },
     output: {

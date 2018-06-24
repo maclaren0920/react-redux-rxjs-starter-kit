@@ -1,21 +1,20 @@
+const path = require('path');
 const webpack = require('webpack');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const ExtractTextPlugin = require('extract-text-webpack-plugin');
-const package = require('./package.json');
-const config = require('./config');
+const ParallelUglifyPlugin = require('webpack-parallel-uglify-plugin');
+const BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPlugin;
+const pkg = require('../package.json');
+const config = require('../config');
 
-let getDependencies = () => {
-    let deps = Object.keys(package.dependencies);
-    if(deps.indexOf('babel-runtime') != -1) {
-        deps.splice(deps.indexOf('babel-runtime'), 1);
-    }
-    return deps;
+function resolve(dir) {
+    return path.resolve(__dirname, '..', dir);
 }
 
 module.exports = {
     entry: {
-        main: './src/main',
-        vendor: getDependencies()
+        main: resolve('src/main.jsx'),
+        vendor: Object.keys(pkg.dependencies)
     },
     output: {
         path: config.buildPath,
@@ -38,7 +37,7 @@ module.exports = {
                 include: config.srcPath,
                 exclude: config.libPath,
                 use: ExtractTextPlugin.extract({
-                    fallback: "style-loader",
+                    fallback: 'style-loader',
                     use: [
                         {
                             loader: 'css-loader',
@@ -92,7 +91,7 @@ module.exports = {
                 include: config.srcPath,
                 exclude: config.libPath,
                 use: ExtractTextPlugin.extract({
-                    fallback: "style-loader",
+                    fallback: 'style-loader',
                     use: [
                         {
                             loader: 'css-loader',
@@ -123,7 +122,7 @@ module.exports = {
                 include: config.srcPath,
                 exclude: config.libPath,
                 use: ExtractTextPlugin.extract({
-                    fallback: "style-loader",
+                    fallback: 'style-loader',
                     use: [
                         {
                             loader: 'css-loader',
@@ -157,10 +156,37 @@ module.exports = {
             },
             {
                 test: /\.(ico|jpg|jpeg|png|gif)(\?.*)?$/,
-                loader: 'file-loader',
-                options: {
-                    name: 'images/[name].[hash:5].[ext]'
-                },
+                use: [
+                    {
+                        loader: 'url-loader',
+                        options: {
+                            name: 'images/[name].[hash:8].[ext]',
+                            limit: 10000,
+                        },
+                    },
+                    {
+                        loader: 'image-webpack-loader',
+                        options: {
+                            mozjpeg: {
+                            progressive: true,
+                                quality: 65
+                            },
+                            optipng: {
+                                enabled: false,
+                            },
+                            pngquant: {
+                                quality: '65-90',
+                                speed: 4
+                            },
+                            gifsicle: {
+                                interlaced: false,
+                            },
+                            webp: {
+                                quality: 75
+                            }
+                        }
+                    }
+                ],      
                 include: config.srcPath,
                 exclude: config.libPath
             },
@@ -172,26 +198,52 @@ module.exports = {
                     limit: 10000,
                 },
                 exclude: config.libPath
+            },
+            {
+                test: /\.(mp4|webm|ogg|mp3|wav|flac|aac)(\?.*)?$/,
+                loader: 'url-loader',
+                options: {
+                  name: 'media/[name].[hash:8].[ext]',
+                  limit: 10000,
+                },
+                include: config.srcPath,
+                exclude: config.libPath
             }
         ]
     },
     resolve: {
         extensions: ['.js', '.jsx', '.css', '.less', '.scss', '.json'],
+        alias: {
+            '@': config.srcPath
+        }
     },
     plugins: [
-        new webpack.optimize.UglifyJsPlugin({
-            compress: { warnings: false },
-            sourceMap: false,
-            comments: false
+        // new BundleAnalyzerPlugin(),
+        new webpack.NamedChunksPlugin(),
+        new ParallelUglifyPlugin({
+            uglifyJS: {
+                output: {
+                    comments: false,
+                    beautify: false
+                },
+                compress: {
+                    warnings: false,
+                    drop_debugger: true,
+                    drop_console: true,
+                    collapse_vars: true,
+                    reduce_vars: true
+                }
+            }
         }),
         new ExtractTextPlugin({
-            filename: 'css/[name].[chunkhash:8].css'
+            filename: 'css/[name].[chunkhash:8].css',
+            allChunks: true
         }),
         new HtmlWebpackPlugin({
             filename: 'index.html',
-            template: './src/static/template.html',
+            template: resolve('src/static/template.html'),
             title: 'React Router Redux Rxjs Generator',
-            chunks: ['main', 'vendor'],
+            chunks: ['main', 'vendor', 'manifest'],
             minify: {
                 removeComments: true,
                 collapseWhitespace: true,
@@ -213,7 +265,7 @@ module.exports = {
         new webpack.NoEmitOnErrorsPlugin(),
         new webpack.optimize.ModuleConcatenationPlugin(),
         new webpack.optimize.CommonsChunkPlugin({
-            name: 'vendor',
+            names: ['vendor', 'manifest'],
             filename: 'js/[name].[chunkhash:8].js',
             minChunks: Infinity
         }),

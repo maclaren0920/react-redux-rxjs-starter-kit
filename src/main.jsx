@@ -6,7 +6,6 @@ import configureStore from './store/configureStore';
 import RouterMap from './router/routerMap';
 import createBrowserHistory from 'history/createBrowserHistory';
 
-import 'babel-polyfill';
 const history = createBrowserHistory();
 const store = configureStore();
 

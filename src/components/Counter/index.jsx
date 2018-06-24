@@ -9,6 +9,11 @@ const Counter = props => {
     const asyncFetch = () => {
         fetchUser('torvalds');
     }
+
+    const fetchData = () => {
+        let set = new Set();
+    }
+
     return (
         <div id={styles.counter}>
             <span> counter: { counter }</span>

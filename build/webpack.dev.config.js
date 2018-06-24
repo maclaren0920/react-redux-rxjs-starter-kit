@@ -1,14 +1,17 @@
 const path = require('path');
 const webpack = require('webpack');
 const OpenBrowserPlugin = require('open-browser-webpack-plugin');
-const config = require('./config');
+const config = require('../config');
+
+function resolve(dir) {
+    return path.resolve(__dirname, '..', dir);
+}
 
 module.exports = {
-    devtool: 'cheap-module-eval-source-map',
+    devtool: 'cheap-module-source-map',
     entry: [
-        'babel-polyfill',
         'webpack-hot-middleware/client?reload=true',
-        './src/main'
+        resolve('src/main')
     ],
     output: {
         path: path.join(__dirname, 'dist'),
@@ -30,6 +33,9 @@ module.exports = {
                 use: [
                     {
                         loader: 'babel-loader',
+                        options: {
+                            sourceMap: true
+                        }
                     }
                 ],
                 include: config.srcPath,
@@ -40,13 +46,19 @@ module.exports = {
                 include: config.srcPath,
                 exclude: config.libPath,
                 use: [
-                    {loader: 'style-loader'},
+                    {
+                        loader: 'style-loader',
+                        options: {
+                            sourceMap: true
+                        }
+                    },
                     {
                         loader: 'css-loader',
                         options: {
                             modules: true,
                             importLoaders: 1,
-                            localIdentName: '[name]-[local]-[hash:5]'
+                            localIdentName: '[name]-[local]-[hash:5]',
+                            sourceMap: true
                         }
                     },
                     {
@@ -56,7 +68,8 @@ module.exports = {
                                 require('autoprefixer')({
                                     broswers: ['last 5 versions']
                                 })
-                            ]
+                            ],
+                            sourceMap: true
                         }
                     }
                 ]
@@ -70,7 +83,8 @@ module.exports = {
                     {
                         loader: 'css-loader',
                         options: {
-                            importLoaders: 1
+                            importLoaders: 1,
+                            sourceMap: true
                         }
                     },
                     {
@@ -80,7 +94,8 @@ module.exports = {
                                 require('autoprefixer')({
                                     broswers: ['last 5 versions']
                                 })
-                            ]
+                            ],
+                            sourceMap: true
                         }
                     }
                 ]
@@ -97,7 +112,8 @@ module.exports = {
                         options: {
                             modules: true,
                             importLoaders: 3,
-                            localIdentName: '[name]-[local]-[hash:base64:5]'
+                            localIdentName: '[name]-[local]-[hash:base64:5]',
+                            sourceMap: true
                         }
                     },
                     {
@@ -107,11 +123,15 @@ module.exports = {
                                 require('autoprefixer')({
                                     broswers: ['last 5 versions']
                                 })
-                            ]
+                            ],
+                            sourceMap: true
                         }
                     },
                     {
-                        loader: 'less-loader'
+                        loader: 'less-loader',
+                        options: {
+                            sourceMap: true
+                        }
                     }
                 ]
             },
@@ -120,13 +140,19 @@ module.exports = {
                 include: config.srcPath,
                 exclude: config.libPath,
                 use: [
-                    {loader: 'style-loader'},
+                    {
+                        loader: 'style-loader',
+                        options: {
+                            sourceMap: true
+                        }
+                    },
                     {
                         loader: 'css-loader',
                         options: {
                             modules: true,
                             importLoaders: 3,
-                            localIdentName: '[name]-[local]-[hash:base64:5]'
+                            localIdentName: '[name]-[local]-[hash:base64:5]',
+                            sourceMap: true
                         }
                     },
                     {
@@ -136,11 +162,15 @@ module.exports = {
                                 require('autoprefixer')({
                                     broswers: ['last 5 versions']
                                 })
-                            ]
+                            ],
+                            sourceMap: true
                         }
                     },
                     {
-                        loader: 'sass-loader'
+                        loader: 'sass-loader',
+                        options: {
+                            sourceMap: true
+                        }
                     }
                 ]
             },
@@ -152,9 +182,10 @@ module.exports = {
             },
             {
                 test: /\.(ico|jpg|jpeg|png|gif)(\?.*)?$/,
-                loader: 'file-loader',
+                loader: 'url-loader',
                 options: {
-                    name: 'images/[name].[hash:5].[ext]'
+                    name: 'images/[name].[hash:5].[ext]',
+                    limit: 10000
                 },
                 include: config.srcPath,
                 exclude: config.libPath
@@ -166,6 +197,16 @@ module.exports = {
                     name: 'fonts/[name].[hash:5].[ext]',
                     limit: 10000,
                 },
+                exclude: config.libPath
+            },
+            {
+                test: /\.(mp4|webm|ogg|mp3|wav|flac|aac)(\?.*)?$/,
+                loader: 'url-loader',
+                options: {
+                  name: 'media/[name].[hash:8].[ext]',
+                  limit: 10000
+                },
+                include: config.srcPath,
                 exclude: config.libPath
             }
         ]

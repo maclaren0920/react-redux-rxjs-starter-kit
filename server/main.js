@@ -8,8 +8,9 @@ const app = express();
 const compiler = webpack(webpackConfig);
 
 app.use(require('webpack-dev-middleware')(compiler, {
+    publicPath  : webpackConfig.output.publicPath,
+    contentBase : path.resolve(__dirname, project.srcPath),
     noInfo: false,
-    publicPath: webpackConfig.output.publicPath,
     progress: true, 
     hot: true,
     quiet: false,

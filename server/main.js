@@ -1,8 +1,8 @@
 const path = require('path');
 const express = require('express');
 const webpack = require('webpack');
-const webpackConfig = require('./build/webpack.dev.config');
-const config = require('./project.conf');
+const webpackConfig = require('../build/webpack.dev.config');
+const project = require('../config/project.conf');
 
 const app = express();
 const compiler = webpack(webpackConfig);
@@ -18,16 +18,16 @@ app.use(require('webpack-dev-middleware')(compiler, {
 
 app.use(require('webpack-hot-middleware')(compiler));
 
-app.use(express.static(path.resolve(__dirname, 'public')));
+app.use(express.static(path.resolve(__dirname, '..', 'public')));
 
 app.get('*', (req, res) => {
     res.sendFile(path.resolve(__dirname, 'index.html'));
 });
 
-app.listen(config.port, (err) => {
+app.listen(project.PORT, (err) => {
     if (err) {
         console.log(err);
         return;
     }
-    console.log(`Listening at http://localhost:${config.port}`);
+    console.log(`Listening at http://localhost: ${project.PORT} `);
 });

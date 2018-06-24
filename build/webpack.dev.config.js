@@ -1,7 +1,8 @@
 const path = require('path');
 const webpack = require('webpack');
+const HtmlWebpackPlugin = require('html-webpack-plugin');
 const OpenBrowserPlugin = require('open-browser-webpack-plugin');
-const config = require('../config');
+const project = require('../config/project.conf');
 
 function resolve(dir) {
     return path.resolve(__dirname, '..', dir);
@@ -15,15 +16,14 @@ module.exports = {
     ],
     output: {
         path: path.join(__dirname, 'dist'),
-        filename: 'bundle.js',
-        publicPath: '/dist/'
+        filename: 'bundle.js'
     },
     module: {
         rules: [
             {
                 enforce: 'pre',
                 test: /\.(js|jsx)$/,
-                exclude:  config.libPath,
+                exclude:  project.libPath,
                 use: [
                     {loader: 'eslint-loader'}
                 ]
@@ -38,13 +38,13 @@ module.exports = {
                         }
                     }
                 ],
-                include: config.srcPath,
-                exclude: config.libPath
+                include: project.srcPath,
+                exclude: project.libPath
             },
             {
                 test: /\.css$/,
-                include: config.srcPath,
-                exclude: config.libPath,
+                include: project.srcPath,
+                exclude: project.libPath,
                 use: [
                     {
                         loader: 'style-loader',
@@ -76,8 +76,8 @@ module.exports = {
             },
             {
                 test: /\.css$/,
-                include: config.libPath,
-                exclude: config.srcPath,
+                include: project.libPath,
+                exclude: project.srcPath,
                 use: [
                     {loader: 'style-loader'},
                     {
@@ -103,8 +103,8 @@ module.exports = {
             },
             {
                 test: /\.less$/,
-                include: config.srcPath,
-                exclude: config.libPath,
+                include: project.srcPath,
+                exclude: project.libPath,
                 use: [
                     {loader: 'style-loader'},
                     {
@@ -137,8 +137,8 @@ module.exports = {
             },
             {
                 test: /\.scss$/,
-                include: config.srcPath,
-                exclude: config.libPath,
+                include: project.srcPath,
+                exclude: project.libPath,
                 use: [
                     {
                         loader: 'style-loader',
@@ -177,8 +177,8 @@ module.exports = {
             {
                 test: /\.json$/,
                 loader: 'json-loader',
-                include: config.srcPath,
-                exclude: config.libPath
+                include: project.srcPath,
+                exclude: project.libPath
             },
             {
                 test: /\.(ico|jpg|jpeg|png|gif)(\?.*)?$/,
@@ -187,8 +187,8 @@ module.exports = {
                     name: 'images/[name].[hash:5].[ext]',
                     limit: 10000
                 },
-                include: config.srcPath,
-                exclude: config.libPath
+                include: project.srcPath,
+                exclude: project.libPath
             },
             {
                 test: /\.(eot|otf|webp|svg|ttf|woff|woff2)(\?.*)?$/,
@@ -197,7 +197,7 @@ module.exports = {
                     name: 'fonts/[name].[hash:5].[ext]',
                     limit: 10000,
                 },
-                exclude: config.libPath
+                exclude: project.libPath
             },
             {
                 test: /\.(mp4|webm|ogg|mp3|wav|flac|aac)(\?.*)?$/,
@@ -206,8 +206,8 @@ module.exports = {
                   name: 'media/[name].[hash:8].[ext]',
                   limit: 10000
                 },
-                include: config.srcPath,
-                exclude: config.libPath
+                include: project.srcPath,
+                exclude: project.libPath
             }
         ]
     },
@@ -216,7 +216,7 @@ module.exports = {
     },
     plugins: [
         new OpenBrowserPlugin({
-            url: 'http://localhost:' + config.port
+            url: 'http://localhost:' + project.PORT
         }),
         new webpack.HotModuleReplacementPlugin(),
         new webpack.NamedModulesPlugin(),
@@ -225,6 +225,11 @@ module.exports = {
                 'NODE_ENV': JSON.stringify('development')
             },
             '__DEV__': JSON.stringify('true')
+        }),
+        new HtmlWebpackPlugin({
+            template: resolve('public/index.html'),
+            filename: 'index.html',
+            title: 'React Router Redux Rxjs Generator'
         })
     ]
 };

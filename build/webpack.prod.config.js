@@ -5,7 +5,7 @@ const ExtractTextPlugin = require('extract-text-webpack-plugin');
 const ParallelUglifyPlugin = require('webpack-parallel-uglify-plugin');
 const BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPlugin;
 const pkg = require('../package.json');
-const config = require('../config');
+const project = require('../config/project.conf');
 
 function resolve(dir) {
     return path.resolve(__dirname, '..', dir);
@@ -17,25 +17,25 @@ module.exports = {
         vendor: Object.keys(pkg.dependencies)
     },
     output: {
-        path: config.buildPath,
+        path: project.buildPath,
         filename: 'js/[name].[chunkhash:8].js',
         chunkFilename: 'js/[name].[chunkhash:8].js',
-        publicPath: config.publicPath
+        publicPath: project.publicPath
     },
     module: {
         rules: [
             {
                 test: /\.(js|jsx)$/,
-                include: config.srcPath,
-                exclude: config.libPath,
+                include: project.srcPath,
+                exclude: project.libPath,
                 use: {
                     loader: 'babel-loader',
                 },
             },
             {
                 test: /\.css$/,
-                include: config.srcPath,
-                exclude: config.libPath,
+                include: project.srcPath,
+                exclude: project.libPath,
                 use: ExtractTextPlugin.extract({
                     fallback: 'style-loader',
                     use: [
@@ -62,8 +62,8 @@ module.exports = {
             },
             {
                 test: /\.css$/,
-                include: config.libPath,
-                exclude: config.srcPath,
+                include: project.libPath,
+                exclude: project.srcPath,
                 use: ExtractTextPlugin.extract({
                     fallback: 'style-loader',
                     use: [
@@ -88,8 +88,8 @@ module.exports = {
             },
             {
                 test: /\.less$/,
-                include: config.srcPath,
-                exclude: config.libPath,
+                include: project.srcPath,
+                exclude: project.libPath,
                 use: ExtractTextPlugin.extract({
                     fallback: 'style-loader',
                     use: [
@@ -119,8 +119,8 @@ module.exports = {
             },
             {
                 test: /\.scss$/,
-                include: config.srcPath,
-                exclude: config.libPath,
+                include: project.srcPath,
+                exclude: project.libPath,
                 use: ExtractTextPlugin.extract({
                     fallback: 'style-loader',
                     use: [
@@ -151,8 +151,8 @@ module.exports = {
             {
                 test: /\.json$/,
                 loader: 'json-loader',
-                include: config.srcPath,
-                exclude: config.libPath
+                include: project.srcPath,
+                exclude: project.libPath
             },
             {
                 test: /\.(ico|jpg|jpeg|png|gif)(\?.*)?$/,
@@ -187,8 +187,8 @@ module.exports = {
                         }
                     }
                 ],      
-                include: config.srcPath,
-                exclude: config.libPath
+                include: project.srcPath,
+                exclude: project.libPath
             },
             {
                 test: /\.(eot|otf|webp|svg|ttf|woff|woff2)(\?.*)?$/,
@@ -197,7 +197,7 @@ module.exports = {
                     name: 'fonts/[name].[hash:5].[ext]',
                     limit: 10000,
                 },
-                exclude: config.libPath
+                exclude: project.libPath
             },
             {
                 test: /\.(mp4|webm|ogg|mp3|wav|flac|aac)(\?.*)?$/,
@@ -206,15 +206,15 @@ module.exports = {
                   name: 'media/[name].[hash:8].[ext]',
                   limit: 10000,
                 },
-                include: config.srcPath,
-                exclude: config.libPath
+                include: project.srcPath,
+                exclude: project.libPath
             }
         ]
     },
     resolve: {
         extensions: ['.js', '.jsx', '.css', '.less', '.scss', '.json'],
         alias: {
-            '@': config.srcPath
+            '@': project.srcPath
         }
     },
     plugins: [
@@ -241,7 +241,7 @@ module.exports = {
         }),
         new HtmlWebpackPlugin({
             filename: 'index.html',
-            template: resolve('src/static/template.html'),
+            template: resolve('public/index.html'),
             title: 'React Router Redux Rxjs Generator',
             chunks: ['main', 'vendor', 'manifest'],
             minify: {
